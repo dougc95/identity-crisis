@@ -14,6 +14,21 @@ Built for juggling multiple GitHub accounts (e.g. `work-account`,
 `personal-account`, `side-project`) that each use a different SSH key — no more silent
 "wrong account" pushes, and no host-alias gymnastics for the common case.
 
+## Quick install
+
+Prebuilt Windows binaries — paste into **PowerShell** to download the [latest
+release](https://github.com/dougc95/identity-crisis/releases/latest) into
+`%LOCALAPPDATA%\identity-crisis`, wire it into git, and launch it:
+
+```powershell
+$ProgressPreference='SilentlyContinue'; $d="$env:LOCALAPPDATA\identity-crisis"; ni $d -Type Directory -Force | Out-Null; 'tray','sshwrap' | % { iwr "https://github.com/dougc95/identity-crisis/releases/latest/download/$_.exe" -OutFile "$d\$_.exe" }; & "$d\tray.exe" --install; Start-Process "$d\tray.exe"
+```
+
+That runs `tray.exe --install` — user-scoped, no admin (details under
+[Install / uninstall](#install--uninstall)). Prefer a manual download? Grab the
+`.zip` from the [latest release](https://github.com/dougc95/identity-crisis/releases/latest)
+and run `tray.exe --install`.
+
 ## How it works
 
 git invokes SSH for every network operation and passes it the repo path. By
