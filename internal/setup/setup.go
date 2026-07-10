@@ -5,6 +5,7 @@ package setup
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -94,9 +95,10 @@ func UnsetGitSSHCommand() error {
 	return nil
 }
 
-// SetRunKey writes a HKCU Run value (run-on-login).
+// SetRunKey writes a HKCU Run value (run-on-login). It creates the Run key if
+// it doesn't already exist (as on a fresh user profile).
 func SetRunKey(name, value string) error {
-	k, err := registry.OpenKey(registry.CURRENT_USER, runKeyPath, registry.SET_VALUE)
+	k, _, err := registry.CreateKey(registry.CURRENT_USER, runKeyPath, registry.SET_VALUE)
 	if err != nil {
 		return err
 	}
@@ -104,10 +106,14 @@ func SetRunKey(name, value string) error {
 	return k.SetStringValue(name, value)
 }
 
-// GetRunKey reads a HKCU Run value; ok is false if the value is absent.
+// GetRunKey reads a HKCU Run value; ok is false if the value (or the Run key
+// itself) is absent.
 func GetRunKey(name string) (value string, ok bool, err error) {
 	k, err := registry.OpenKey(registry.CURRENT_USER, runKeyPath, registry.QUERY_VALUE)
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return "", false, nil
+		}
 		return "", false, err
 	}
 	defer k.Close()
@@ -121,10 +127,14 @@ func GetRunKey(name string) (value string, ok bool, err error) {
 	return v, true, nil
 }
 
-// DeleteRunKey removes a HKCU Run value (no error if already absent).
+// DeleteRunKey removes a HKCU Run value (no error if the value or Run key is
+// already absent).
 func DeleteRunKey(name string) error {
 	k, err := registry.OpenKey(registry.CURRENT_USER, runKeyPath, registry.SET_VALUE)
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
 		return err
 	}
 	defer k.Close()
