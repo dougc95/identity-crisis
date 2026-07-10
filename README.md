@@ -1,5 +1,7 @@
 # identity-crisis
 
+[![CI](https://github.com/dougc95/identity-crisis/actions/workflows/ci.yml/badge.svg)](https://github.com/dougc95/identity-crisis/actions/workflows/ci.yml)
+
 *For when git can't decide who you are.* A Windows system-tray app (binary +
 config namespace: `identity-tray`) that switches the **active git/ssh identity**
 with one click. Picking an identity sets, globally:
@@ -103,3 +105,10 @@ The wrapper's pure logic (host classification, owner parsing, key injection),
 the identity model (config load, atomic state, git-config actions, apply), the
 icon/setup helpers, and an end-to-end `cmd/sshwrap` run against a stub ssh
 (asserting arg injection + exit-code propagation) are all covered.
+
+CI runs `go build`, `go vet`, and `go test` on `windows-latest` for every push
+and pull request.
+
+## License
+
+[MIT](LICENSE).
