@@ -70,17 +70,26 @@ Run `tray.exe`. The tray menu shows:
 
 ## Configuration
 
-`~/.identity-tray/identities.toml` (seeded on first run, hand-editable):
+Identities live in `~/.identity-tray/identities.toml`. The app seeds a working
+copy on first run, so you can just edit that — from the tray menu choose
+**Open config**, or open the file directly. See
+[`identities.example.toml`](identities.example.toml) for a fully-commented
+reference you can copy from; changes take effect the next time you switch
+identities.
 
 ```toml
 [[identity]]
-label       = "work-account"   # menu label + active-state token
-key         = "~/.ssh/id_work"
-name        = "work-account"    # git user.name
-email       = "you@example.com"    # git user.email
-signing_key = "~/.ssh/id_work.pub"
-owners      = ["work-account"]  # owners this identity is used for; empty = no mismatch warnings
+label       = "work"                # menu label + active-state token (unique)
+key         = "~/.ssh/id_work"      # SSH private key; ~ expands to your home
+name        = "Jane Developer"      # git user.name when active
+email       = "jane@company.com"    # git user.email when active
+signing_key = "~/.ssh/id_work.pub"  # SSH public key for commit signing
+owners      = ["acme-corp"]         # owners this identity may push to; [] disables the mismatch warning
 ```
+
+Add one `[[identity]]` block per account. To use one key across several owners
+(e.g. a personal account plus an org), list them all in `owners`; to silence the
+mismatch warning entirely for an identity, set `owners = []`.
 
 Other files under `~/.identity-tray/`:
 

@@ -1,0 +1,55 @@
+# identity-crisis — example identities configuration
+#
+# HOW TO USE
+#   The app seeds a working ~/.identity-tray/identities.toml on first run, so you
+#   normally just edit that. This file is a richer, fully-commented reference you
+#   can copy from:
+#
+#     copy    %USERPROFILE%\.identity-tray\identities.toml   (PowerShell/cmd)
+#     cp      ~/.identity-tray/identities.toml                (git-bash)
+#
+#   Or open the live config any time from the tray menu -> "Open config".
+#   Changes take effect the next time you switch identities from the tray.
+#
+# EACH [[identity]] BLOCK IS ONE SWITCHABLE IDENTITY. FIELDS:
+#   label        Menu label and the token written to ~/.identity-tray/active.
+#                Must be unique. Pick anything memorable.
+#   key          Path to the SSH PRIVATE key used to authenticate git over SSH.
+#                A leading ~ expands to your home directory.
+#   name         git user.name applied globally when this identity is active.
+#   email        git user.email applied globally when this identity is active.
+#   signing_key  Path to the SSH PUBLIC key (.pub) used for commit signing
+#                (sets git user.signingkey with gpg.format=ssh).
+#   owners       GitHub owners (users/orgs) this identity is expected to push to.
+#                If a repo's owner isn't in this list, the wrapper prints a
+#                warning and toasts it -- but never blocks the git command.
+#                Leave it empty ([]) to disable the warning for this identity.
+
+# A work identity, scoped to a single org.
+[[identity]]
+label       = "work"
+key         = "~/.ssh/id_work"
+name        = "Jane Developer"
+email       = "jane@company.com"
+signing_key = "~/.ssh/id_work.pub"
+owners      = ["acme-corp"]
+
+# A personal identity that covers your personal account AND a side org you
+# belong to -- list every owner you push to with this key so none of them warn.
+[[identity]]
+label       = "personal"
+key         = "~/.ssh/id_personal"
+name        = "jane"
+email       = "jane@example.com"
+signing_key = "~/.ssh/id_personal.pub"
+owners      = ["jane", "jane-side-projects"]
+
+# An identity with mismatch warnings turned off (empty owners). Use this when a
+# key legitimately pushes to many unrelated owners and the warning is just noise.
+[[identity]]
+label       = "misc"
+key         = "~/.ssh/id_misc"
+name        = "jane"
+email       = "jane@example.com"
+signing_key = "~/.ssh/id_misc.pub"
+owners      = []
